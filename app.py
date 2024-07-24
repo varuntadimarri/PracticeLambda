@@ -113,8 +113,6 @@ def lambda_handler(event, context):
                     logger.error(f"failed to get the object {key} from bucket {bucket}: {str(e)}")
                     raise e
                 
-                logger.info(f"uploaded the {thumbnail_key} to {thumbnail_bucket}")
-                
                 img = Image.open(BytesIO(file_byte_string))
                 logger.info(f"Size before compression: {img.size}")
 
@@ -128,7 +126,8 @@ def lambda_handler(event, context):
                 buffer.seek(0)
                 
                 try:
-                    sent_data = s3_client.put_object(Bucket=thumbnail_bucket, Key=thumbnail_key, Body=buffer)
+                    sent_data = s3_client.put_object(Bucket=thumbnail_bucket, Key=thumbnail_key, Body=buffer)    
+                    logger.info(f"uploaded the {thumbnail_key} to {thumbnail_bucket}")
                 except boto3.exceptions.S3UploadFailedError as e:
                     logger.error(f"Failed to upload  image {thumbnail_key} to bucket {thumbnail_bucket}: {str(e)}")
                     raise e
