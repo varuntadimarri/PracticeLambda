@@ -1,9 +1,19 @@
-output "bucket_arn" {
+output "source_bucket_arn" {
   description = "The ARN of the S3 bucket."
-  value       = aws_s3_bucket.this.arn
+  value       = aws_s3_bucket.source_bucket.arn
 }
 
-output "bucket_id" {
+output "source_bucket_id" {
   description = "The name of the S3 bucket."
-  value       = aws_s3_bucket.this.id
+  value       = aws_s3_bucket.source_bucket.id
+}
+
+output "target_bucket_arn" {
+  description = "The ARN of the S3 bucket."
+  value       = aws_s3_bucket.target_bucket.arn
+}
+
+output "target_bucket_id" {
+  description = "The name of the S3 bucket."
+  value       = aws_s3_bucket.target_bucket.id
 }

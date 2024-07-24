@@ -10,6 +10,9 @@ resource "aws_lambda_event_source_mapping" "sqs_event_source" {
   function_name    = var.lambda_function_arn
   enabled          = true
   batch_size       = 10
-  count            = var.lambda_function_arn != "" ? 1 : 0
+  
+  depends_on 	   = [var.lambda_function_arn]
+  #count            = var.lambda_function_arn != "" ? 1 : 0
+
 }
 

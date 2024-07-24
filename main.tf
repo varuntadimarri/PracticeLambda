@@ -5,45 +5,48 @@ provider "aws" {
 
 module "source_bucket" {
   source      = "./modules/s3"
-  bucket_name = "varun-practice-source-bucket2"
+  bucket_name = "practice-source-bucket1"
    bucket_policy = jsonencode({
     "Version": "2012-10-17",
     "Statement": [
         {
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::165247465111:role/MyLambdaRole1"
+                "AWS": "arn:aws:iam::654654534105:role/MyLambdaRole1"
             },
             "Action": [
                 "s3:GetObject",
                 "s3:PutObject"
             ],
-            "Resource": "arn:aws:s3:::varun-practice-source-bucket2/*"
+            "Resource": "arn:aws:s3:::practice-source-bucket1/*"
         }
     ]
   })
   sns_topic_arn = module.sns_topic.sns_topic_arn
+  is_source_bucket = true
 }
 
 module "target_bucket" {
   source      = "./modules/s3"
-  bucket_name = "varun-practice-target-bucket1"
-   bucket_policy = jsonencode({
+  bucket_name = "practice-target-bucket2"
+  is_source_bucket = false 
+  bucket_policy = jsonencode({
     "Version": "2012-10-17",
     "Statement": [
         {
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::165247465111:role/MyLambdaRole1"
+                "AWS": "arn:aws:iam::654654534105:role/MyLambdaRole1"
             },
             "Action": [
                 "s3:GetObject",
                 "s3:PutObject"
             ],
-            "Resource": "arn:aws:s3:::varun-practice-target-bucket1/*"
+            "Resource": "arn:aws:s3:::practice-target-bucket2/*"
         }
     ]
   })
+  sns_topic_arn = ""
 }
 
 resource "aws_iam_policy" "MyLambdaPolicy1" {
@@ -63,8 +66,8 @@ resource "aws_iam_policy" "MyLambdaPolicy1" {
           "logs:PutLogEvents"
         ],
         "Resource": [
-          "arn:aws:sqs:us-east-1:165247465111:image_queue1",
-          "arn:aws:logs:*:165247465111:log-group:/aws/lambda/mylambda1:*"
+          "arn:aws:sqs:us-east-1:654654534105:image_queue1",
+          "arn:aws:logs:*:654654534105:log-group:/aws/lambda/mylambda1:*"
         ]
       },
       {
@@ -75,8 +78,8 @@ resource "aws_iam_policy" "MyLambdaPolicy1" {
           "logs:CreateLogGroup"
         ],
         "Resource": [
-          "arn:aws:logs:us-east-1:165247465111:*",
-          "arn:aws:sqs:us-east-1:165247465111:image_queue1"
+          "arn:aws:logs:us-east-1:654654534105:*",
+          "arn:aws:sqs:us-east-1:654654534105:image_queue1"
         ]
       },
       {
@@ -86,7 +89,7 @@ resource "aws_iam_policy" "MyLambdaPolicy1" {
           "logs:CreateLogGroup"
         ],
         "Resource": [
-          "arn:aws:logs:*:165247465111:log-group:*"
+          "arn:aws:logs:*:654654534105:log-group:*"
         ]
       },
       {
@@ -98,9 +101,9 @@ resource "aws_iam_policy" "MyLambdaPolicy1" {
           "s3:ListBucket"
         ],
         "Resource": [
-          "arn:aws:s3:::varun-practice-source-bucket2",
-          "arn:aws:s3:::varun-practice-source-bucket2/*",
-          "arn:aws:s3:::varun-practice-target-bucket1/*"
+          "arn:aws:s3:::practice-source-bucket1",
+          "arn:aws:s3:::practice-source-bucket1/*",
+          "arn:aws:s3:::practice-target-bucket2/*"
         ]
       }
     ]
@@ -160,13 +163,13 @@ module "sns_topic" {
           "Service": "s3.amazonaws.com"
         },
         "Action": "SNS:Publish",
-        "Resource": "arn:aws:sns:us-east-1:165247465111:image_topic1",
+        "Resource": "arn:aws:sns:us-east-1:654654534105:image_topic1",
         "Condition": {
           "StringEquals": {
-            "aws:SourceAccount": "165247465111"
+            "aws:SourceAccount": "654654534105"
           },
           "ArnLike": {
-            "aws:SourceArn": "arn:aws:s3:*:*:varun-practice-source-bucket2"
+            "aws:SourceArn": "arn:aws:s3:*:*:practice-source-bucket1"
           }
         }
       },
@@ -177,10 +180,10 @@ module "sns_topic" {
           "Service": "sqs.amazonaws.com"
         },
         "Action": "sns:Subscribe",
-        "Resource": "arn:aws:sns:us-east-1:165247465111:image_topic1",
+        "Resource": "arn:aws:sns:us-east-1:654654534105:image_topic1",
         "Condition": {
           "ArnEquals": {
-            "aws:SourceArn": "arn:aws:sqs:us-east-1:165247465111:image_queue1"
+            "aws:SourceArn": "arn:aws:sqs:us-east-1:654654534105:image_queue1"
           }
         }
       }
@@ -206,10 +209,10 @@ module "sqs_queue" {
           "sqs:ReceiveMessage",
           "sqs:sendMessage"
         ],
-        "Resource": "arn:aws:sqs:us-east-1:165247465111:image_queue1",
+        "Resource": "arn:aws:sqs:us-east-1:654654534105:image_queue1",
         "Condition": {
           "ArnEquals": {
-            "aws:SourceArn": "arn:aws:lambda:us-east-1:165247465111:mylambda1"
+            "aws:SourceArn": "arn:aws:lambda:us-east-1:654654534105:mylambda1"
           }
         }
       },
@@ -220,10 +223,10 @@ module "sqs_queue" {
           "AWS": "*"
         },
         "Action": "sqs:SendMessage",
-        "Resource": "arn:aws:sqs:us-east-1:165247465111:image_queue1",
+        "Resource": "arn:aws:sqs:us-east-1:654654534105:image_queue1",
         "Condition": {
           "ArnLike": {
-            "aws:SourceArn": "arn:aws:sns:us-east-1:165247465111:image_topic1"
+            "aws:SourceArn": "arn:aws:sns:us-east-1:654654534105:image_topic1"
           }
         }
       }

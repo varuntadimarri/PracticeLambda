@@ -1,18 +1,18 @@
-# outputs.tf
+
 output "source_bucket_id" {
-  value = module.source_bucket.bucket_id
+  value = module.source_bucket.source_bucket_id
 }
 
 output "source_bucket_arn" {
-  value = module.target_bucket.bucket_arn
+  value = module.target_bucket.source_bucket_arn
 }
 
 output "target_bucket_id" {
-  value = module.target_bucket.bucket_id
+  value = module.target_bucket.target_bucket_id
 }
 
 output "target_bucket_arn" {
-  value = module.target_bucket.bucket_arn
+  value = module.target_bucket.target_bucket_arn
 }
 
 output "MyLambdaPolicy1_arn" {

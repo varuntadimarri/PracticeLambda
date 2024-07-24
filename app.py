@@ -31,7 +31,7 @@ def lambda_handler(event, context):
             
             
         s3_client = boto3.client('s3')
-        bucket_objects = list_objects(s3_client, 'varun-practice-source-bucket2')
+        bucket_objects = list_objects(s3_client, 'practice-source-bucket1')
 
         for sqs_message in event['Records']:
             logger.info("SQS msg")
@@ -88,7 +88,7 @@ def lambda_handler(event, context):
                     else:
                         raise ValueError(f"No objects found with key: {key}")
                         
-                thumbnail_bucket = "varun-practice-target-bucket1"
+                thumbnail_bucket = "practice-target-bucket2"
                 thumbnail_name, thumbnail_ext = os.path.splitext(key)
                 thumbnail_key = f"{thumbnail_name}_thumbnail{thumbnail_ext}"
         
